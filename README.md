@@ -1,56 +1,27 @@
-# 🌊 Sunu Blue Tech
+# 🛰️ AgriConnect Sénégal
+**Plateforme d'Agriculture de Précision basée sur les données Copernicus**
 
-Application made in Dakar 🇸🇳 pour la navigation et la pêche artisanale.
+AgriConnect remplace officiellement SunuBlueTech pour se concentrer sur la souveraineté alimentaire au Sénégal. Nous utilisons l'imagerie satellite pour surveiller la santé des cultures en temps réel.
 
-## 🚀 Fonctionnalités
+## 🌍 Notre Mission
+Transformer l'agriculture dans la Vallée du Fleuve Sénégal (Richard-Toll, Podor, Matam) et le Bassin Arachidier en fournissant aux agriculteurs des alertes précises sur :
+* **La Vigueur des plantes (NDVI)**
+* **Le Stress hydrique (Besoins en eau)**
+* **L'optimisation des engrais**
 
-- **Rapports automatiques** : Données de vagues, courants et température pour 5 zones côtières
-- **Notifications Telegram** : Bulletins quotidiens avec cartes
-- **Application Web PWA** : Accessible hors ligne
-- **API REST** : Endpoints pour données dynamiques
-- **Interface Flask** : Serveur web complet
+## 🚀 Technologie
+Nous exploitons la constellation de satellites **Sentinel-2** du programme européen **Copernicus** via l'API Google Earth Engine.
 
-## 📍 Zones couvertes
 
-- Saint-Louis
-- Loumpoul
-- Dakar / Kayar
-- Mbour / Joal
-- Casamance
 
-## 🛠 Installation
+## 📂 Structure du Projet
+* `/backend` : Serveur Flask/FastAPI gérant l'application mobile.
+* `/satellite_engine` : Algorithmes de traitement d'images Copernicus (Ancien moteur PecheurConnect adapté).
+* `/mobile_app` : Interface utilisateur pour les producteurs.
 
-1. Cloner le repo
-2. Installer les dépendances : `pip install -r requirements.txt`
-3. Configurer les variables d'environnement :
-   - `COPERNICUS_USERNAME`
-   - `COPERNICUS_PASSWORD`
-   - `TG_TOKEN`
-   - `TG_ID`
-   - `DEBUG` (optionnel, "true" pour mode debug avec logs détaillés)
-4. Lancer l'app : `python app.py`
-
-## 🌐 Utilisation
-
-- **Page d'accueil** : `http://localhost:5000/`
-- **À propos** : `http://localhost:5000/about`
-- **Services** : `http://localhost:5000/services`
-- **API données** : `http://localhost:5000/api/data`
-- **Lancer script** : POST `http://localhost:5000/api/run-script`
-
-## 📊 Workflow GitHub Actions
-
-- Exécution automatique 2x/jour (5h et 15h UTC)
-- Génération de rapports et envoi Telegram
-
-## 🔧 Développement
-
-Le script `script_peche.py` génère automatiquement :
-- `data.json` : Données de pêche
-- `sw.js` : Service Worker PWA
-- `manifest.json` : Configuration PWA
-- Templates HTML dans `templates/`
-
----
-
-*Xam-Xam au service du Géej* ⚓
+## 🛠️ Installation
+```bash
+git clone [https://github.com/Doundou969/agriconnect-sn.git](https://github.com/Doundou969/agriconnect-sn.git)
+cd backend
+pip install -r requirements.txt
+python app.py
