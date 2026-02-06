@@ -3,32 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>À Propos - Sunu Blue Tech</title>
+    <title>PecheurConnect - Dashboard Agri</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; margin: 0; padding: 20px; 
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white; text-align: center;
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eef2f3; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px; }
+        .zone-info { background: #f9f9f9; padding: 10px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #27ae60; }
+        .gauge-label { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px; }
+        .gauge-bar { background: #ecf0f1; border-radius: 15px; height: 30px; width: 100%; overflow: hidden; border: 1px solid #bdc3c7; }
+        .gauge-progress { 
+            height: 100%; 
+            width: {{ data.score_ndvi * 100 }}%; 
+            background: linear-gradient(90deg, #e74c3c 0%, #f1c40f 50%, #2ecc71 100%); 
+            transition: width 1.5s ease-in-out;
         }
-        .container { max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.1); 
-            padding: 40px; border-radius: 20px; backdrop-filter: blur(10px);
-        }
-        nav { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-bottom: 30px; }
-        nav a { color: #00d4ff; text-decoration: none; margin: 0 20px; font-weight: bold; }
-        nav a:hover { color: white; }
-        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .status-box { margin-top: 25px; padding: 15px; border-radius: 10px; background: #e8f8f5; color: #117a65; font-size: 1.1em; }
+        .footer { margin-top: 30px; font-size: 0.8em; color: #7f8c8d; }
     </style>
 </head>
 <body>
     <div class="container">
-        <nav>
-            <a href="/">🏠 Accueil</a>
-            <a href="/about">👨‍💻 À Propos</a>
-            <a href="/services">⚙️ Services</a>
-        </nav>
-        <h1>🌊 À Propos - Sunu Blue Tech</h1>
-        <p>Application 100% made in Dakar 🇸🇳 par des développeurs sénégalais passionnés !</p>
-        <button onclick="history.back()" style="background: #00d4ff; color: black; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 50px; cursor: pointer;">← Retour</button>
+        <h1>PecheurConnect 🛰️</h1>
+        <div class="zone-info">
+            <strong>📍 Secteur :</strong> {{ data.zone }}<br>
+            <strong>📅 Mise à jour :</strong> {{ data.derniere_maj }}
+        </div>
+
+        <div class="gauge-label">
+            <span>Santé de la culture (NDVI)</span>
+            <span>{{ data.score_ndvi }}</span>
+        </div>
+        <div class="gauge-bar">
+            <div class="gauge-progress"></div>
+        </div>
+
+        <div class="status-box">
+            <strong>Résultat :</strong> {{ data.etat }}<br>
+            <p style="font-size: 0.9em; margin-top: 10px;">{{ data.recommandation }}</p>
+        </div>
+
+        <div class="footer">
+            Données propulsées par Copernicus Sentinel-2 - AgriConnect Engine v2.0
+        </div>
     </div>
 </body>
 </html>
