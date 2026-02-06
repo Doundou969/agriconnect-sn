@@ -3,52 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunu Blue Tech - App Officielle</title>
+    <title>BAOLSAT - Intelligence Agro-Spatiale</title>
     <link rel="manifest" href="/static/manifest.json">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0; padding: 20px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            /* Nouveau dégradé : Terre & Technologie */
+            background: linear-gradient(135deg, #0b0f13 0%, #1a2f23 100%);
             color: white; text-align: center;
         }
         .container {
-            max-width: 600px; margin: 0 auto;
-            background: rgba(255,255,255,0.1); padding: 40px;
-            border-radius: 20px; backdrop-filter: blur(10px);
+            max-width: 650px; margin: 0 auto;
+            background: rgba(255,255,255,0.05); padding: 40px;
+            border-radius: 25px; backdrop-filter: blur(15px);
+            border: 1px solid rgba(46, 204, 113, 0.2);
         }
         nav {
-            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-bottom: 30px;
+            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; margin-bottom: 30px;
         }
         nav a {
-            color: #00d4ff; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 1.1em;
+            color: #2ecc71; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 1em;
         }
-        nav a:hover { color: white; }
-        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        nav a:hover { color: white; text-shadow: 0 0 8px #2ecc71; }
+        h1 { font-size: 2.2em; margin-bottom: 10px; color: #2ecc71; }
+        
         button {
-            background: #00d4ff; color: black; border: none; padding: 15px 30px;
-            font-size: 1.2em; border-radius: 50px; cursor: pointer; margin: 10px;
-            transition: all 0.3s;
+            background: #2ecc71; color: #0b0f13; border: none; padding: 15px 30px;
+            font-size: 1.1em; border-radius: 50px; cursor: pointer; margin: 10px;
+            font-weight: bold; transition: all 0.3s ease;
         }
-        button:hover { background: #00b8e6; transform: scale(1.05); }
-        #data-container { margin-top: 30px; text-align: left; }
-        .data-item { background: rgba(0,0,0,0.2); padding: 15px; margin: 10px 0; border-radius: 10px; }
+        button:hover { background: #27ae60; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3); }
+        
+        #data-container { margin-top: 35px; text-align: left; }
+        h2 { font-size: 1.2em; border-bottom: 1px solid #2ecc71; padding-bottom: 5px; }
+        .data-item { 
+            background: rgba(255,255,255,0.07); 
+            padding: 15px; 
+            margin: 12px 0; 
+            border-radius: 12px; 
+            border-left: 4px solid #2ecc71;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <nav>
             <a href="/">🏠 Accueil</a>
-            <a href="/about">👨‍💻 À Propos</a>
-            <a href="/services">⚙️ Services</a>
+            <a href="/dashboard">🛰️ Copernicus</a>
+            <a href="/market">📈 Bourse</a>
         </nav>
-        <h1>🌊 Sunu Blue Tech</h1>
-        <p>Votre application officielle est prête ! Navigation complète ✅</p>
-        <button onclick="showMessage()">🚀 Démarrer l'app</button>
-        <button onclick="alert('Bonjour depuis Dakar ! 🇸🇳')">📱 Test</button>
+        
+        <h1>🛰️ BAOLSAT</h1>
+        <p>Intelligence Satellite au service du Baol ✅</p>
+        
+        <button onclick="launchApp()">🚀 Ouvrir le Hub</button>
+        <button onclick="alert('Connecté aux flux Copernicus Sentinel-2 🇸🇳')">📡 Statut Flux</button>
+        
         <div id="data-container">
-            <h2>📊 Données de Pêche Récentes</h2>
-            <div id="data-list"></div>
+            <h2>📊 Analyse de Vigueur Végétale (NDVI)</h2>
+            <div id="data-list">
+                </div>
         </div>
     </div>
 
@@ -57,27 +72,31 @@
             navigator.serviceWorker.register('/static/sw.js');
         }
 
-        function showMessage() {
-            alert("🎉 Félicitations ! Navigation multi-pages fonctionnelle !");
+        function launchApp() {
+            window.location.href = '/dashboard';
         }
 
-        // Load data from /api/data
-        fetch('/api/data')
+        // Chargement des données Agro-Spatiales
+        fetch('/api/agro_thermal')
             .then(response => response.json())
             .then(data => {
                 const dataList = document.getElementById('data-list');
+                dataList.innerHTML = ''; // Nettoyage
                 data.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'data-item';
                     div.innerHTML = `
-                        <strong>${item.date}</strong> - ${item.zone}<br>
-                        Température: ${item.temp}°C<br>
-                        Espèces: ${item.species}
+                        <strong>📅 ${item.date}</strong> - 📍 ${item.zone}<br>
+                        <span style="color: #2ecc71;">Temp. Sol: ${item.temp_sol}°C</span><br>
+                        <em>Statut: ${item.etat}</em>
                     `;
                     dataList.appendChild(div);
                 });
             })
-            .catch(error => console.error('Erreur chargement données:', error));
+            .catch(error => {
+                console.error('Erreur:', error);
+                document.getElementById('data-list').innerHTML = '<p style="color:gray;">Données hors-ligne ou serveur BaolSAT indisponible.</p>';
+            });
     </script>
 </body>
 </html>
