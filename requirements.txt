@@ -1,22 +1,13 @@
-# --- Cœur du Système (Backend & Serveur) ---
-flask==3.0.2
-flask-sqlalchemy==3.1.1
-waitress==3.0.0             # Serveur WSGI pour la production
-gunicorn==21.2.0           # Alternative robuste pour Docker
-
-# --- Traitement des données Copernicus & Satellite ---
-copernicusmarine           # Accès direct aux flux Sentinel/Marine
-xarray==2023.12.0          # Manipulation de cubes de données climatiques
-netcdf4==1.6.5             # Lecture des formats de fichiers satellites
-cftime==1.6.3              # Gestion du temps pour les séries temporelles
-numpy==1.26.4
-matplotlib==3.8.3
-
-# --- Intelligence & Géolocalisation ---
-requests==2.31.0           # Appels API (OpenWeather, Copernicus)
-geopy==2.4.1               # Calcul des distances et zones de culture
-gtts==2.5.1                # Synthèse vocale pour alertes audio (Wolof/Fr)
-speech_recognition==3.10.1 # Commande vocale pour les agents sur le terrain
-
-# --- Optionnel (Futur) ---
-# wolof_translator
+copernicusmarine>=2.3.0
+numpy>=1.26.0
+matplotlib>=3.8.0
+requests>=2.31.0
+xarray>=2024.1.0
+netcdf4>=1.6.5
+cftime>=1.6.3
+flask>=3.0.0
+flask-sqlalchemy>=3.1.1
+waitress>=3.0.0
+gtts>=2.5.0
+geopy>=2.4.1
+SpeechRecognition>=3.10.4
