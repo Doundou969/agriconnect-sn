@@ -1,26 +1,35 @@
-__pycache__
-*.pyc
-*.pyo
-*.pyd
+# --- Python & Environnement ---
+__pycache__/
+*.py[cod]
+*$py.class
 .Python
-env
-venv
-.venv
-pip-log.txt
-pip-delete-this-directory.txt
-.tox
+env/
+venv/
+.venv/
+.tox/
+.mypy_cache/
+.pytest_cache/
+
+# --- Base de données BAOLSAT ---
+# On ignore les bases de données locales pour ne pas pousser 
+# tes messages de chat privés sur GitHub.
+*.db
+!baolsat_template.db  # Optionnel : garde un template vide si besoin
+sunu.db
+
+# --- Fichiers Médias (Photos du Chat) ---
+# On ne veut pas sauvegarder toutes les photos envoyées par les agents sur Git
+static/uploads/*
+!static/uploads/.gitkeep
+
+# --- Logs & Performance ---
+*.log
 .coverage
-.coverage.*
 .cache
 nosetests.xml
 coverage.xml
-*.cover
-*.log
-.git
-.mypy_cache
-.pytest_cache
-.hypothesis
+
+# --- Système ---
 .DS_Store
-sunu.db
-*.png
-__pycache__/
+.vscode/
+.idea/
