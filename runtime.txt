@@ -1,1 +1,4 @@
-python-3.9.18
+python -m venv venv
+source venv/bin/activate
+# Vérifie ta version
+python --version  # Doit afficher Python 3.9.18
