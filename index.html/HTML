@@ -3,81 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunu Blue Tech - App Officielle</title>
+    <title>BAOLSAT - Intelligence Agro-Spatiale</title>
     <link rel="manifest" href="/static/manifest.json">
+    
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0; padding: 20px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            /* Changement de couleur pour le Vert BAOLSAT / Espace */
+            background: linear-gradient(135deg, #0b0f13 0%, #161b22 100%);
             color: white; text-align: center;
         }
         .container {
-            max-width: 600px; margin: 0 auto;
-            background: rgba(255,255,255,0.1); padding: 40px;
+            max-width: 800px; margin: 0 auto;
+            background: rgba(46, 204, 113, 0.05); padding: 40px;
+            border: 1px solid rgba(46, 204, 113, 0.2);
             border-radius: 20px; backdrop-filter: blur(10px);
         }
         nav {
-            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-bottom: 30px;
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 30px;
         }
         nav a {
-            color: #00d4ff; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 1.1em;
+            color: #2ecc71; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 1.1em;
         }
-        nav a:hover { color: white; }
-        h1 { font-size: 2.5em; margin-bottom: 10px; }
-        button {
-            background: #00d4ff; color: black; border: none; padding: 15px 30px;
+        nav a:hover { color: white; text-shadow: 0 0 10px #2ecc71; }
+        h1 { font-size: 2.8em; margin-bottom: 10px; color: #2ecc71; }
+        
+        .btn-main {
+            background: #2ecc71; color: #0b0f13; border: none; padding: 15px 30px;
             font-size: 1.2em; border-radius: 50px; cursor: pointer; margin: 10px;
-            transition: all 0.3s;
+            font-weight: bold; transition: all 0.3s;
         }
-        button:hover { background: #00b8e6; transform: scale(1.05); }
+        .btn-main:hover { background: #27ae60; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4); }
+        
         #data-container { margin-top: 30px; text-align: left; }
-        .data-item { background: rgba(0,0,0,0.2); padding: 15px; margin: 10px 0; border-radius: 10px; }
+        .data-item { 
+            background: rgba(255,255,255,0.05); 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 10px; 
+            border-left: 4px solid #2ecc71;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
         <nav>
-            <a href="/">🏠 Accueil</a>
-            <a href="/about">👨‍💻 À Propos</a>
-            <a href="/services">⚙️ Services</a>
+            <a href="/">🛰️ Dashboard</a>
+            <a href="#">📈 Bourse</a>
+            <a href="#">📋 Rapports</a>
         </nav>
-        <h1>🌊 Sunu Blue Tech</h1>
-        <p>Votre application officielle est prête ! Navigation complète ✅</p>
-        <button onclick="showMessage()">🚀 Démarrer l'app</button>
-        <button onclick="alert('Bonjour depuis Dakar ! 🇸🇳')">📱 Test</button>
+
+        <h1>🛰️ BAOLSAT</h1>
+        <p style="color: #8b949e;">Intelligence Agricole & Surveillance Copernicus Sénégal</p>
+
+        <div style="margin: 30px 0;">
+            <button class="btn-main" onclick="location.href='/'">🚀 Lancer le Hub</button>
+            <button class="btn-main" style="background: transparent; border: 2px solid #2ecc71; color: #2ecc71;" onclick="testCopernicus()">📡 Test Satellite</button>
+        </div>
+        
         <div id="data-container">
-            <h2>📊 Données de Pêche Récentes</h2>
-            <div id="data-list"></div>
+            <h3 style="border-bottom: 1px solid #30363d; padding-bottom: 10px;">📊 Derniers Indices Bourse</h3>
+            <div id="price-list">
+                <div class="data-item">Chargement des cours du jour...</div>
+            </div>
         </div>
     </div>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/static/sw.js');
-        }
+<script>
+    // Enregistrement du Service Worker pour le mode Hors-ligne
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/static/sw.js');
+    }
 
-        function showMessage() {
-            alert("🎉 Félicitations ! Navigation multi-pages fonctionnelle !");
-        }
+    // Fonction pour simuler une alerte satellite
+    async function testCopernicus() {
+        const res = await fetch('/simulate_copernicus', {method: 'POST'});
+        if(res.ok) alert("✅ Signal envoyé au hub BAOLSAT !");
+    }
 
-        // Load data from /api/data
-        fetch('/api/data')
-            .then(response => response.json())
-            .then(data => {
-                const dataList = document.getElementById('data-list');
-                data.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'data-item';
-                    div.innerHTML = `
-                        <strong>${item.date}</strong> - ${item.zone}<br>
-                        Température: ${item.temp}°C<br>
-                        Espèces: ${item.species}
-                    `;
-                    dataList.appendChild(div);
-                });
-            })
-            .catch(error => console.error('Erreur chargement données:', error));
-    </script>
+    // Chargement dynamique des prix depuis ton API Flask
+    async function loadPrices() {
+        const container = document.getElementById('price-list');
+        try {
+            // Ici on réutilise les données injectées par Jinja ou un fetch API
+            // Pour l'exemple, on simule l'affichage
+            container.innerHTML = `
+                <div class="data-item">🥜 Arachide : 325 FCFA/kg <span style="float:right">📈</span></div>
+                <div class="data-item">🍚 Riz local : 190 FCFA/kg <span style="float:right">➖</span></div>
+            `;
+        } catch (e) {
+            container.innerHTML = "<div class='data-item'>Erreur de connexion aux données.</div>";
+        }
+    }
+
+    loadPrices();
+</script>
 </body>
 </html>
