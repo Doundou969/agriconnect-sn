@@ -1,20 +1,23 @@
 [
     {
         "date": "2026-01-22",
-        "zone": "Dakar",
-        "temp": 24.5,
-        "species": "Sardine, Thon"
+        "zone": "Dakar (Niayes)",
+        "temp_sol": 24.5,
+        "culture_cible": "Oignon / Pomme de terre",
+        "indice_viguer": "Optimal"
     },
     {
         "date": "2026-01-21",
-        "zone": "Cap Vert",
-        "temp": 23.8,
-        "species": "Maquereau"
+        "zone": "Zone Cap Vert",
+        "temp_sol": 23.8,
+        "culture_cible": "Maraîchage",
+        "indice_viguer": "Vigueur Haute"
     },
     {
         "date": "2026-01-20",
-        "zone": "Goree",
-        "temp": 25.2,
-        "species": "Poisson volant"
+        "zone": "Gorée (Périphérie)",
+        "temp_sol": 25.2,
+        "culture_cible": "Fourrage",
+        "indice_viguer": "Stable"
     }
 ]
