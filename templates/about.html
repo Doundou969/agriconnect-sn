@@ -3,47 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PecheurConnect - Dashboard Agri</title>
+    <title>BAOLSAT - Intelligence Agro-Spatiale</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eef2f3; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px; }
-        .zone-info { background: #f9f9f9; padding: 10px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #27ae60; }
-        .gauge-label { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px; }
-        .gauge-bar { background: #ecf0f1; border-radius: 15px; height: 30px; width: 100%; overflow: hidden; border: 1px solid #bdc3c7; }
+        :root {
+            --baol-green: #2ecc71;
+            --baol-dark: #2c3e50;
+            --bg-gray: #f4f7f6;
+        }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-gray); margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        
+        /* Header BAOLSAT */
+        h1 { color: var(--baol-dark); border-bottom: 3px solid var(--baol-green); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .logo-text { font-weight: 800; letter-spacing: -1px; }
+
+        .zone-info { background: #fdfdfd; padding: 15px; border-radius: 12px; margin: 20px 0; border: 1px solid #eee; border-left: 5px solid var(--baol-green); }
+        
+        /* NDVI Gauge */
+        .gauge-label { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; color: #555; }
+        .gauge-bar { background: #e0e0e0; border-radius: 20px; height: 25px; width: 100%; overflow: hidden; }
         .gauge-progress { 
             height: 100%; 
-            width: {{ data.score_ndvi * 100 }}%; 
-            background: linear-gradient(90deg, #e74c3c 0%, #f1c40f 50%, #2ecc71 100%); 
-            transition: width 1.5s ease-in-out;
+            width: {{ (data.score_ndvi * 100) }}%; 
+            /* Dégradé NDVI Standard : Rouge (sec) -> Jaune -> Vert (vigoureux) */
+            background: linear-gradient(90deg, #ff4b2b 0%, #ffb400 50%, #2ecc71 100%); 
+            transition: width 2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
         }
-        .status-box { margin-top: 25px; padding: 15px; border-radius: 10px; background: #e8f8f5; color: #117a65; font-size: 1.1em; }
-        .footer { margin-top: 30px; font-size: 0.8em; color: #7f8c8d; }
+
+        .status-box { margin-top: 25px; padding: 20px; border-radius: 12px; background: #f0fff4; border: 1px solid #c6f6d5; color: #22543d; }
+        .status-box strong { color: #2f855a; font-size: 1.2em; }
+
+        .footer { margin-top: 30px; font-size: 0.75em; color: #95a5a6; text-align: center; border-top: 1px solid #eee; padding-top: 15px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>PecheurConnect 🛰️</h1>
+        <h1>
+            <span class="logo-text">BAOLSAT 🛰️</span>
+            <span style="font-size: 0.4em; background: var(--baol-dark); color: white; padding: 4px 8px; border-radius: 5px;">AGRO-TECH</span>
+        </h1>
+
         <div class="zone-info">
             <strong>📍 Secteur :</strong> {{ data.zone }}<br>
-            <strong>📅 Mise à jour :</strong> {{ data.derniere_maj }}
+            <strong>📅 Satellite (LST/NDVI) :</strong> {{ data.derniere_maj }}
         </div>
 
         <div class="gauge-label">
-            <span>Santé de la culture (NDVI)</span>
-            <span>{{ data.score_ndvi }}</span>
+            <span>Indice de Vigueur Végétale (NDVI)</span>
+            <span style="color: var(--baol-green);">{{ data.score_ndvi }}</span>
         </div>
         <div class="gauge-bar">
             <div class="gauge-progress"></div>
         </div>
 
         <div class="status-box">
-            <strong>Résultat :</strong> {{ data.etat }}<br>
-            <p style="font-size: 0.9em; margin-top: 10px;">{{ data.recommandation }}</p>
+            <strong>Diagnostic :</strong> {{ data.etat }}<br>
+            <p style="line-height: 1.5; margin-top: 10px;">{{ data.recommandation }}</p>
         </div>
 
         <div class="footer">
-            Données propulsées par Copernicus Sentinel-2 - AgriConnect Engine v2.0
+            Système connecté aux serveurs de **Copernicus** (Sentinel-2) <br>
+            © 2026 BAOLSAT Intelligence - Analyse en temps réel du territoire Sénégalais
         </div>
     </div>
 </body>
