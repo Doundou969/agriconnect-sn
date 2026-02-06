@@ -1,5 +1,5 @@
 [
-    {"date": "2026-01-22", "zone": "Dakar", "temp": 24.5, "species": "Sardine, Thon"},
-    {"date": "2026-01-21", "zone": "Cap Vert", "temp": 23.8, "species": "Maquereau"},
-    {"date": "2026-01-20", "zone": "Goree", "temp": 25.2, "species": "Poisson volant"}
+    {"date": "2026-02-06", "zone": "Bassin Arachidier", "temp_sol": 38.5, "etat": "Alerte Stress"},
+    {"date": "2026-02-05", "zone": "Vallée du Fleuve", "temp_sol": 32.8, "etat": "Optimal"},
+    {"date": "2026-02-04", "zone": "Niayes", "temp_sol": 29.2, "etat": "Favorable"}
 ]
