@@ -1,18 +1,20 @@
-name: BAOLSAT Daily Intelligence 🛰️
+name: BAOLSAT 2026 CI/CD
 
 on:
-  schedule:
-    - cron: '0 8 * * *'  # 8h UTC = 8h à Dakar (en 2026, vérifie le décalage)
-  workflow_dispatch:      # Permet de lancer le rapport manuellement depuis GitHub
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  intelligence_agro_spatiale:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: 📥 Récupération du code source
+      - name: 📥 Checkout du code
         uses: actions/checkout@v4
 
-      - name: 🐍 Configuration de Python 3.12
+      - name: 🐍 Configuration Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -20,15 +22,23 @@ jobs:
       - name: 📦 Installation des dépendances
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          
-      - name: 🛰️ Analyse Copernicus & Envoi Rapport
-        env:
-          # Secrets à configurer dans les paramètres GitHub de ton dépôt
-          TG_TOKEN: ${{ secrets.TG_TOKEN }}
-          TG_ID: ${{ secrets.TG_ID }}
-          COPERNICUS_USERNAME: ${{ secrets.COPERNICUS_USERNAME }}
-          COPERNICUS_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
-          # On peut aussi passer l'URL de ton serveur Flask si tu veux poster l'alerte
-          BAOLSAT_SERVER_URL: ${{ secrets.BAOLSAT_SERVER_URL }}
-        run: python script_baolsat_intelligence.py
+          # On installe le requirements.txt qui est maintenant dans le dossier backend
+          pip install -r backend/requirements.txt
+
+      - name: 🔍 Vérification du Core Engine (NDVI)
+        run: |
+          # Correction du chemin : on pointe vers satellite_engine
+          python -m py_compile satellite_engine/ndvi_engine.py
+
+      - name: 🌐 Vérification du Backend Flask
+        run: |
+          # Correction du chemin : on pointe vers backend
+          python -m py_compile backend/app.py
+
+      - name: 🚀 Test de lancement (Simulation)
+        run: |
+          cd backend
+          # On lance Flask en arrière-plan pour vérifier qu'il ne crash pas au démarrage
+          python app.py & 
+          sleep 10
+          kill $!
