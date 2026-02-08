@@ -1,105 +1,79 @@
-import os, sys, datetime, sqlite3, random, glob
-from flask import Flask, render_template, request, redirect, url_for, send_file
+import os, sys, datetime, sqlite3, random
+from flask import Flask, render_template, request, redirect, url_for
 
 # --- CONFIGURATION DES CHEMINS ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PARENT_DIR = os.path.join(BASE_DIR, '..')
-sys.path.append(os.path.join(PARENT_DIR, 'satellite_engine'))
+# Ajout du dossier satellite_engine au PATH pour les imports
+sys.path.append(os.path.join(BASE_DIR, 'satellite_engine'))
 
-# --- IMPORTS DES MOTEURS ---
 try:
     from ndvi_engine import BaolSatEngine
-    from script_peche import job as peche_job
     sat_engine = BaolSatEngine()
-    print("✅ Moteurs BAOLSAT & PecheurConnect : CHARGÉS")
-except ImportError as e:
-    print(f"⚠️ ERREUR D'IMPORT : {e}")
-    sat_engine, peche_job = None, None
+    print("✅ Moteur BAOLSAT (Copernicus) : CHARGÉ")
+except ImportError:
+    sat_engine = None
+    print("⚠️ Moteur NDVI introuvable, passage en mode simulation.")
 
 app = Flask(__name__)
-# Utilisation d'un chemin absolu pour la base de données sur le serveur
-app.config['DATABASE'] = os.path.join(PARENT_DIR, 'baolsat.db')
+# La DB sera créée à la racine sur Render
+app.config['DATABASE'] = os.path.join(BASE_DIR, 'baolsat.db')
 
-# --- INITIALISATION AUTOMATIQUE DE LA BASE DE DONNÉES ---
+# --- INITIALISATION DE LA DB ---
 def init_db():
-    """Crée les tables et insère des données initiales si nécessaire"""
-    print("🛠️ Vérification de la base de données...")
     with sqlite3.connect(app.config['DATABASE']) as conn:
         cursor = conn.cursor()
-        
-        # Création de la table chat (Correction de ton erreur sqlite3.OperationalError)
+        # Table Chat (ex-PecheurConnect adapté)
         cursor.execute('''CREATE TABLE IF NOT EXISTS chat 
-            (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-             user TEXT, 
-             text TEXT, 
-             time TEXT, 
-             is_critical INTEGER)''')
-        
-        # Création de la table bourse
+            (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, text TEXT, time TEXT, is_critical INTEGER)''')
+        # Table Bourse Agricole
         cursor.execute('''CREATE TABLE IF NOT EXISTS bourse 
-            (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-             produit TEXT, 
-             prix INTEGER, 
-             unite TEXT, 
-             tendance TEXT)''')
+            (id INTEGER PRIMARY KEY AUTOINCREMENT, produit TEXT, prix INTEGER, tendance TEXT)''')
         
-        # Insertion de données de test si la bourse est vide
+        # Données initiales si vide
         cursor.execute("SELECT count(*) FROM bourse")
         if cursor.fetchone()[0] == 0:
-            cursor.execute("INSERT INTO bourse (produit, prix, unite, tendance) VALUES ('Arachide', 285, 'kg', 'up')")
-            cursor.execute("INSERT INTO bourse (produit, prix, unite, tendance) VALUES ('Riz Local', 425, 'kg', 'down')")
-            cursor.execute("INSERT INTO bourse (produit, prix, unite, tendance) VALUES ('Mil', 310, 'kg', 'up')")
-            print("📦 Données initiales insérées.")
-        
+            cursor.executemany("INSERT INTO bourse (produit, prix, tendance) VALUES (?, ?, ?)", 
+                [('Arachide', 285, 'up'), ('Riz Local', 425, 'down'), ('Oignon', 350, 'up')])
         conn.commit()
-    print("✅ Base de données prête.")
 
-# Lancement de l'initialisation au démarrage de l'app
 init_db()
 
-# --- LOGIQUE DE DONNÉES ---
-def get_live_data():
-    geo_config = {
-        "Saint-Louis (Riz)": [16.01, -16.48],
-        "Dahra (Élevage)": [15.33, -15.48],
-        "Kaolack (Bassin)": [14.14, -16.07],
-        "Ziguinchor (Sud)": [12.58, -16.27],
-        "Pikine (Niayes)": [14.75, -17.39]
+# --- LOGIQUE MÉTIER ---
+def get_map_data():
+    zones = {
+        "Saint-Louis": [16.01, -16.48], "Dahra": [15.33, -15.48],
+        "Kaolack": [14.14, -16.07], "Ziguinchor": [12.58, -16.27]
     }
     agri_data = []
-    for zone, coords in geo_config.items():
-        res = sat_engine.get_satellite_insight(zone) if sat_engine else {"vigueur":0.5, "rendement_t_ha":0, "statut":"N/A", "besoin_azote":"N/A", "pluie_7j":0, "conseil":""}
+    for zone, coords in zones.items():
+        # Simulation ou appel API Copernicus via le moteur
+        val = sat_engine.get_satellite_insight(zone) if sat_engine else {"vigueur": random.uniform(0.4, 0.8)}
         agri_data.append({
             "zone": zone, "lat": coords[0], "lng": coords[1],
-            "ndvi": res["vigueur"], "rendement": res["rendement_t_ha"],
-            "azote": res["besoin_azote"], "pluie": res["pluie_7j"], "conseil": res["conseil"]
+            "ndvi": round(val.get("vigueur", 0.5), 2),
+            "status": "Optimal" if val.get("vigueur", 0.5) > 0.6 else "Alerte Stress"
         })
     return agri_data
 
 # --- ROUTES ---
 @app.route('/')
 def home():
-    agri_data = get_live_data()
     try:
+        data = get_map_data()
         with sqlite3.connect(app.config['DATABASE']) as conn:
             conn.row_factory = sqlite3.Row
-            messages = conn.execute("SELECT * FROM chat ORDER BY id DESC LIMIT 15").fetchall()
             prices = conn.execute("SELECT * FROM bourse").fetchall()
+            messages = conn.execute("SELECT * FROM chat ORDER BY id DESC LIMIT 10").fetchall()
+        
+        return render_template('index.html', 
+                               agri_data=data, 
+                               prices=prices, 
+                               messages=messages,
+                               now=datetime.datetime.now().strftime("%H:%M"))
     except Exception as e:
-        print(f"❌ Erreur lecture DB : {e}")
-        messages, prices = [], []
-
-    return render_template('index.html', 
-                           agri_data=agri_data, 
-                           prices=prices, 
-                           messages=messages,
-                           now=datetime.datetime.now().strftime("%d/%m/%Y %H:%M"))
-
-@app.route('/simulate_copernicus', methods=['POST'])
-def simulate_copernicus():
-    if peche_job:
-        peche_job()
-    return redirect(url_for('home'))
+        return f"Erreur BAOLSAT : {str(e)}", 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Indispensable pour Render
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
